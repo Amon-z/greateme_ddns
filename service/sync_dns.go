@@ -36,9 +36,13 @@ func SyncAllDomain(domainList *[]entity.DomainAnalyze, syncWithNoChange *bool, d
 		var targetRecord *alidns20150109.DescribeDomainRecordsResponseBodyDomainRecordsRecord = nil
 		// 判断记录类型是否存在
 		for _, record := range *dnsList {
-			if strings.Compare(*record.Type, "A") == 0 || // IPv4记录类型
-				strings.Compare(*record.Type, "AAAA") == 0 || // IPv6记录类型
-				strings.Compare(*record.Type, "CNAME") == 0 || // CNAME记录类型
+			// 指定记录类型（ipv4或者ipv6）存在
+			if strings.Compare(*record.Type, *alibaba.GetDNSType(dnsType)) == 0{
+				targetRecord = record
+				break
+			}
+			// 不存在指定记录类型但存在以下其他记录类型
+			if strings.Compare(*record.Type, "CNAME") == 0 || // CNAME记录类型
 				strings.Compare(*record.Type, "TXT") == 0 { // TXT记录类型
 				targetRecord = record
 				break
